@@ -15,7 +15,7 @@ figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === 'create-rectangles') {
-    const nodes: SceneNode[] = [];
+    let nodes: SceneNode[] = [];
     for (let i = 0; i < msg.count; i++) {
       const rect = figma.createRectangle();
       rect.x = i * 150;

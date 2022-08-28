@@ -1,5 +1,5 @@
 {
-  "name": "poi-first-plugin",
+  "name": "Demo-figma-plugin",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
   "main": "code.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "@figma/plugin-typings": "^1.50.0",
+    "@figma/plugin-typings": "*",
     "typescript": "*"
   }
 }
