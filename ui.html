@@ -1,17 +1,58 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<div class="p-2">
+  <h2 class="text-2xl">Generate Figma variable to JSON format</h2>
+  <div
+    class="relative w-full transform transition delay-150 duration-300 ease-in-out h-[80%]"
+  >
+    <div
+      class="w-[80px] flex justify-center items-center z-20 bottom-0 absolute right-0 h-10 text-white bg-green-500"
+      id="success-tooltip"
+    >
+      Copied !!!
+    </div>
+    <div
+      class="h-full z-10 overflow-scroll border bg-slate-100 text-blick w-full"
+      id="preview"
+    ></div>
+  </div>
+  <button class="h-10 text-white bg-slate-500 w-[135px]" id="gen-json-lang">
+    Generate JSON
+  </button>
+  <button class="h-10 text-white btn bg-teal-800 w-[115px]" id="copy-json">
+    Copy JSON
+  </button>
+  <button id="go-to-convert" class="h-10 text-white bg-orange-800 w-[225px]">
+    Go To convert JSON to Excel
+  </button>
+</div>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
 <script>
+  let data = {};
+  document.getElementById("success-tooltip").style.display = "none";
+  document.getElementById("gen-json-lang").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "preview" } }, "*");
+  };
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
+  const copyElement = (document.getElementById("copy-json").onclick = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = JSON.stringify(data?.result);
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+    document.getElementById("success-tooltip").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("success-tooltip").style.display = "none";
+    }, 3000);
+  });
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+  document.getElementById("go-to-convert").onclick = () => {
+    window.open("https://www.convertcsv.com/json-to-csv.htm");
+  };
 
+  onmessage = (event) => {
+    data = event.data.pluginMessage;
+    document.getElementById("preview").innerHTML = JSON.stringify(
+      event.data.pluginMessage
+    );
+  };
 </script>
