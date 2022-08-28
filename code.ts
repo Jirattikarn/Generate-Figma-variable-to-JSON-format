@@ -1,33 +1,36 @@
-// This plugin will open a window to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
+figma.showUI(__html__, { width: 600, height: 500 });
 
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (see documentation).
-
-// This shows the HTML page in "ui.html".
-figma.showUI(__html__);
-
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
-figma.ui.onmessage = msg => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-rectangles') {
-    let nodes: SceneNode[] = [];
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
+figma.ui.onmessage = async (msg) => {
+  if (msg.type === "preview") {
+    let result = await runPlugin();
+    console.log(result);
+    // thanks this: https://egghead.io/lessons/javascript-communicate-between-the-plugin-and-figma
+    figma.ui.postMessage({ type: "preview", result });
   }
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+  // figma.closePlugin();
 };
+
+const convertToJSON = (spiltByComma: string[]) => {
+  let result: any = {};
+  for (let item of spiltByComma) {
+    let splitByEqual: string[] = item.split("=");
+    result[splitByEqual[0]] = splitByEqual[1];
+  }
+
+  return result;
+};
+
+const runPlugin = async () => {
+  let result: any[] = [];
+  figma.currentPage.findAll((node) => {
+    if (node.type === "TEXT" && node.name.startsWith("key=")) {
+      let spiltByComma = node?.name?.split(",");
+      result = [...result, convertToJSON(spiltByComma)];
+    }
+    return false;
+  });
+  return result;
+};
+
+runPlugin();
