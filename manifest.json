@@ -1,6 +1,6 @@
 {
-  "name": "poi-first-plugin",
-  "id": "1145607860685974939",
+  "name": "Demo-figma-plugin",
+  "id": "1145623659343507878",
   "api": "1.0.0",
   "main": "code.js",
   "editorType": [
