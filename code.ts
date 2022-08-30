@@ -11,11 +11,15 @@ figma.ui.onmessage = async (msg) => {
   // figma.closePlugin();
 };
 
-const convertToJSON = (spiltByComma: string[]) => {
+const convertToJSON = (spiltByComma: string[], text: string) => {
   let result: any = {};
   for (let item of spiltByComma) {
     let splitByEqual: string[] = item.split("=");
-    result[splitByEqual[0]] = splitByEqual[1];
+    if (!splitByEqual[1]) {
+      result[splitByEqual[0]] = text.replace(/\n/, "");
+    } else {
+      result[splitByEqual[0]] = splitByEqual[1];
+    }
   }
 
   return result;
@@ -23,10 +27,10 @@ const convertToJSON = (spiltByComma: string[]) => {
 
 const runPlugin = async () => {
   let result: any[] = [];
-  figma.currentPage.findAll((node) => {
+  figma.currentPage.findAll((node: SceneNode) => {
     if (node.type === "TEXT" && node.name.startsWith("key=")) {
       let spiltByComma = node?.name?.split(",");
-      result = [...result, convertToJSON(spiltByComma)];
+      result = [...result, convertToJSON(spiltByComma, node?.characters)];
     }
     return false;
   });
