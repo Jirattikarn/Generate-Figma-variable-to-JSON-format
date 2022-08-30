@@ -28,7 +28,7 @@ const convertToJSON = (spiltByComma: string[], text: string) => {
 const runPlugin = async () => {
   let result: any[] = [];
   figma.currentPage.findAll((node: SceneNode) => {
-    if (node.type === "TEXT" && node.name.startsWith("key=")) {
+    if (node.type === "TEXT" && node.name.startsWith("key=") && node.visible) {
       let spiltByComma = node?.name?.split(",");
       result = [...result, convertToJSON(spiltByComma, node?.characters)];
     }
