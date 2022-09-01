@@ -4,7 +4,7 @@
     class="relative w-full transform transition delay-150 duration-300 ease-in-out h-[80%]"
   >
     <div
-      class="w-[80px] flex justify-center items-center z-20 bottom-0 absolute right-0 h-10 text-white bg-green-500"
+      class="w-[80px] mt-4 z-20 rounded bottom-[14px] absolute right-[14px] h-10 text-white bg-green-500"
       id="success-tooltip"
     >
       Copied !!!
@@ -52,7 +52,7 @@
   onmessage = (event) => {
     data = event.data.pluginMessage;
     document.getElementById("preview").innerHTML = JSON.stringify(
-      event.data.pluginMessage
+      event.data.pluginMessage?.result
     );
   };
 </script>

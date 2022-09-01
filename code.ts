@@ -1,5 +1,7 @@
 figma.showUI(__html__, { width: 600, height: 500 });
 
+figma.skipInvisibleInstanceChildren = true;
+
 figma.ui.onmessage = async (msg) => {
   if (msg.type === "preview") {
     let result = await runPlugin();
@@ -27,14 +29,23 @@ const convertToJSON = (spiltByComma: string[], text: string) => {
 
 const runPlugin = async () => {
   let result: any[] = [];
-  figma.currentPage.findAll((node: SceneNode) => {
-    if (node.type === "TEXT" && node.name.startsWith("key=") && node.visible) {
-      let spiltByComma = node?.name?.split(",");
-      result = [...result, convertToJSON(spiltByComma, node?.characters)];
+
+  figma.currentPage.findChildren((nodeParent: SceneNode) => {
+    if (nodeParent.type === "FRAME" && nodeParent.visible) {
+      let nodes = nodeParent.findAllWithCriteria({
+        types: ["TEXT"],
+      });
+
+      for (let node of nodes) {
+        let text = node.characters;
+        if (node.name.startsWith("key=") && node.visible) {
+          let spiltByComma = node?.name?.split(",");
+          result = [...result, convertToJSON(spiltByComma as string[], text)];
+        }
+      }
     }
     return false;
   });
+
   return result;
 };
-
-runPlugin();
